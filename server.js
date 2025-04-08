@@ -5,6 +5,17 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "./public/images/");
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  });
+  
+  const upload = multer({ storage: storage });
+  
 app.get("/",(req, res)=>{
     res.sendFile(__dirname+"/index.html");
 });
@@ -82,6 +93,10 @@ let houses = [
 
 app.get("/api/houses", (req, res)=>{
     res.send(houses);
+});
+
+app.post("/api/houses", (req,res)=>{
+
 });
 
 app.listen(3001, ()=>{
