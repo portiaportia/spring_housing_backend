@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
+const Joi = require("joi");
 const app = express();
 app.use(express.static("public"));
 app.use(express.json());
@@ -15,13 +17,14 @@ const storage = multer.diskStorage({
   });
   
   const upload = multer({ storage: storage });
-  
+
 app.get("/",(req, res)=>{
     res.sendFile(__dirname+"/index.html");
 });
 
 let houses = [
     {
+    "_id":1,
     "name": "Farmhouse",
     "size": 2000,
     "bedrooms": 3,
@@ -43,6 +46,7 @@ let houses = [
     ]
     },
     {
+    "_id":2,
     "name": "Mountain House",
     "size": 1700,
     "bedrooms": 3,
@@ -68,6 +72,7 @@ let houses = [
     ]
     },
     {
+    "_id":3,
     "name": "Lake House",
     "size": 3000,
     "bedrooms": 4,
@@ -95,9 +100,44 @@ app.get("/api/houses", (req, res)=>{
     res.send(houses);
 });
 
-app.post("/api/houses", (req,res)=>{
+app.post("/api/houses", upload.single("img"), (req,res)=>{
+    const result = validateHouse(req.body);
 
+
+    if(result.error){
+        console.log("I have an error");
+        res.status(400).send(result.error.deatils[0].message);
+        return;
+    }
+
+    const house = {
+        _id: houses.length,
+        name:req.body.name,
+        size:req.body.size,
+        bedrooms:req.body.bedrooms,
+        bathrooms:req.body.bathrooms,
+    };
+
+    if(req.file){
+        house.main_image = req.file.filename;
+    }
+
+    houses.push(house);
+    res.status(200).send(house);
 });
+
+const validateHouse = (house) => {
+    const schema = Joi.object({
+        _id:Joi.allow(""),
+        name:Joi.string().min(3).required(),
+        size:Joi.number().required().min(0),
+        bedrooms:Joi.number().required().min(0),
+        bathrooms:Joi.number().required().min(0),
+
+    });
+
+    return schema.validate(house);
+};
 
 app.listen(3001, ()=>{
     console.log("I'm listening");
