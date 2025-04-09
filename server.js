@@ -118,9 +118,6 @@ app.post("/api/houses", upload.single("img"), (req,res)=>{
         bathrooms:req.body.bathrooms,
     };
 
-    if(req.file){
-        house.main_image = req.file.filename;
-    }
 
     houses.push(house);
     res.status(200).send(house);
