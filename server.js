@@ -127,6 +127,33 @@ app.post("/api/houses", upload.single("img"), (req,res)=>{
     res.status(200).send(house);
 });
 
+app.put("/api/houses/:id", upload.single("img"),(req,res)=>{
+    const house = houses.find((house)=>house._id===parseInt(req.params.id));
+
+    if(!house){
+        res.status(404).send("The house with the provided id was not found");
+        return;
+    }
+
+    const result = validateHouse(req.body);
+
+    if(result.error){
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+
+    house.name = req.body.name;
+    house.description = req.body.description;
+    house.size = req.body.size;
+    house.bathrooms = req.body.bathrooms;
+    house.bedrooms = req.body.bedrooms;
+
+    if(req.file){
+        house.main_image = req.file.filename;
+    }
+
+    req.status(200).send(house);
+});
 
 const validateHouse = (house) => {
     const schema = Joi.object({
