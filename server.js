@@ -152,17 +152,20 @@ app.put("/api/houses/:id", upload.single("img"),(req,res)=>{
         house.main_image = req.file.filename;
     }
 
-    req.status(200).send(house);
+    res.status(200).send(house);
 });
 
 app.delete("/api/houses/:id",(req,res)=>{
+    console.log("I'm trying to delete" + req.params.id);
     const house = houses.find((house)=>house._id===parseInt(req.params.id));
 
     if(!house){
+        console.log("Oh no i wasn't found");
         res.status(404).send("The house with the provided id was not found");
         return;
     }
-
+    console.log("YAY You found me");
+    console.log("The house you are deleting is " + house.name);
     const index = houses.indexOf(house);
     houses.splice(index,1);
     res.status(200).send(house);
