@@ -47,28 +47,28 @@ app.get("/api/houses", async(req, res) => {
   res.send(houses);
 });
 
-app.post("/api/houses", upload.single("img"), async(req, res) => {
-  const result = validateHouse(req.body);
+app.post("/api/houses", upload.single("img"), async(req,res)=>{
+const result = validateHouse(req.body);
 
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
+
+if(result.error){
     console.log("I have an error");
+    res.status(400).send(result.error.deatils[0].message);
     return;
-  }
+}
 
-  const house = new House({
+const house = {
+    _id: houses.length,
     name:req.body.name,
     size:req.body.size,
     bedrooms:req.body.bedrooms,
-    bathrooms:req.body.bathrooms
-  });
+    bathrooms:req.body.bathrooms,
+};
 
-  if (req.file) {
-    console.log("Showing the file");
-    console.log(req.file.filename);
-
+//adding image
+if(req.file){
     house.main_image = req.file.filename;
-  }
+  };
 
  const newHouse = await house.save();
 
