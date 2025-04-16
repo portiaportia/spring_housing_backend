@@ -19,6 +19,15 @@ const storage = multer.diskStorage({
   
   const upload = multer({ storage: storage });
 
+  mongoose
+  .connect("mongodb+srv://portiaportia:RCq4HTMF7ZXfeU8O@data.ng58qmq.mongodb.net/")
+  .then(() => {
+    console.log("connected to mongodb");
+  })
+  .catch((error) => {
+    console.log("couldn't connect to mongodb", error);
+  });
+  
 app.get("/",(req, res)=>{
     res.sendFile(__dirname+"/index.html");
 });
